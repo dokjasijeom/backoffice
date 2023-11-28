@@ -5,4 +5,10 @@ export default defineNuxtConfig({
   antd: {
     // Options,
   },
+  pinia: {
+    storesDirs: [
+      "./stores/**",
+      // './custom-folder/stores/**'
+    ],
+  },
 });
