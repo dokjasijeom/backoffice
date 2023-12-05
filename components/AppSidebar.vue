@@ -3,7 +3,6 @@
     id="dddddd"
     v-model:openKeys="openKeys"
     v-model:selectedKeys="selectedKeys"
-    style="width: 256px"
     mode="inline"
     :items="items"
     @click="handleClick"
@@ -13,8 +12,8 @@
 import { reactive, ref, watch, VueElement, h } from "vue";
 import {
   BookOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
+  BarsOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons-vue";
 import type { MenuProps, ItemType } from "ant-design-vue";
 
@@ -44,6 +43,10 @@ const items: ItemType[] = reactive([
     getItem("회차 목록", "3"),
   ]),
 
+  { type: "divider" },
+  getItem("장르 목록", "4", () => h(BarsOutlined)),
+  { type: "divider" },
+  getItem("작가 목록", "5", () => h(UsergroupAddOutlined)),
   { type: "divider" },
 ]);
 
