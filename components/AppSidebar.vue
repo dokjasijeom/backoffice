@@ -12,6 +12,7 @@
 import { reactive, ref, watch, VueElement, h } from "vue";
 import {
   BookOutlined,
+  ShopOutlined,
   BarsOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons-vue";
@@ -44,9 +45,12 @@ const items: ItemType[] = reactive([
   ]),
 
   { type: "divider" },
-  getItem("장르 목록", "4", () => h(BarsOutlined)),
+  getItem("출판사 목록", "4", () => h(ShopOutlined)),
+
   { type: "divider" },
-  getItem("작가 목록", "5", () => h(UsergroupAddOutlined)),
+  getItem("장르 목록", "5", () => h(BarsOutlined)),
+  { type: "divider" },
+  getItem("작가 목록", "6", () => h(UsergroupAddOutlined)),
   { type: "divider" },
 ]);
 
