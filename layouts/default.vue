@@ -34,6 +34,6 @@ const collapsed = ref<boolean>(false);
 }
 .main-layout {
   padding: 24px;
-  min-height: 360px;
+  min-height: 100vh;
 }
 </style>

@@ -11,4 +11,16 @@ export default defineNuxtConfig({
       // './custom-folder/stores/**'
     ],
   },
+  future: {
+    typescriptBundlerResolution: false,
+  },
+  experimental: {
+    viewTransition: true,
+  },
+  css: ["@/assets/css/reset.css"],
+  runtimeConfig: {
+    public: {
+      baseApiURL: process.env.API_BASE_URL || "http://localhost:8080/",
+    },
+  },
 });

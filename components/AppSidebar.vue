@@ -4,7 +4,7 @@
     v-model:openKeys="openKeys"
     v-model:selectedKeys="selectedKeys"
     mode="inline"
-    :items="items"
+    :items="userStore.userData ? items : noAuthItems"
     @click="handleClick"
   ></a-menu>
 </template>
@@ -15,8 +15,10 @@ import {
   ShopOutlined,
   BarsOutlined,
   UsergroupAddOutlined,
+  UserOutlined,
 } from "@ant-design/icons-vue";
 import type { MenuProps, ItemType } from "ant-design-vue";
+const userStore = useUsers();
 
 const selectedKeys = ref<string[]>(["1"]);
 const openKeys = ref<string[]>(["sub1"]);
@@ -27,15 +29,19 @@ function getItem(
   icon?: any,
   children?: ItemType[],
   type?: "group"
-): ItemType {
+) {
   return {
     key,
     icon,
     children,
     label,
     type,
-  } as ItemType;
+  };
 }
+
+const noAuthItems: ItemType[] = reactive([
+  getItem("로그인이 필요합니다.", "sub1", () => h(UserOutlined)),
+]);
 
 const items: ItemType[] = reactive([
   getItem("콘텐츠 관리", "sub1", () => h(BookOutlined), [
@@ -54,7 +60,7 @@ const items: ItemType[] = reactive([
   { type: "divider" },
 ]);
 
-const handleClick: MenuProps["onClick"] = (e) => {
+const handleClick = (e: any) => {
   console.log("click", e);
 };
 
