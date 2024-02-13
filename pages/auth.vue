@@ -87,6 +87,8 @@ const onFinish = async (values: any) => {
 
     dsAut.value = (useUsers().userData as any).token;
     dsUser.value = useUsers().userData;
+
+    return navigateTo("/");
   }
 };
 

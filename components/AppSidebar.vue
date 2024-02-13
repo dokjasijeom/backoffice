@@ -24,7 +24,7 @@ const selectedKeys = ref<string[]>(["1"]);
 const openKeys = ref<string[]>(["sub1"]);
 
 function getItem(
-  label: VueElement | string,
+  label: VNode | VueElement | string,
   key: string,
   icon?: any,
   children?: ItemType[],
@@ -48,15 +48,23 @@ const items: ItemType[] = reactive([
     getItem("웹툰 / 웹소설 목록", "1"),
     getItem("시리즈 목록", "2"), // 단행본, 단일 회차 구분
     getItem("회차 목록", "3"),
+    getItem(
+      h(
+        resolveComponent("nuxt-link"),
+        { to: "/publish-day/list" },
+        "연재일 목록"
+      ),
+      "4"
+    ),
   ]),
 
   { type: "divider" },
-  getItem("출판사 목록", "4", () => h(ShopOutlined)),
+  getItem("출판사 목록", "5", () => h(ShopOutlined)),
 
   { type: "divider" },
-  getItem("장르 목록", "5", () => h(BarsOutlined)),
+  getItem("장르 목록", "6", () => h(BarsOutlined)),
   { type: "divider" },
-  getItem("작가 목록", "6", () => h(UsergroupAddOutlined)),
+  getItem("작가 목록", "7", () => h(UsergroupAddOutlined)),
   { type: "divider" },
 ]);
 
