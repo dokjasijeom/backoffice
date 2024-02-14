@@ -6,9 +6,11 @@
       v-model:collapsed="collapsed"
       collapsible
     >
-      <div class="logo">
-        <img src="/logo.svg" style="width: 100%; height: 100%" />
-      </div>
+      <NuxtLink to="/">
+        <div class="logo">
+          <img src="/logo.svg" style="width: 100%; height: 100%" />
+        </div>
+      </NuxtLink>
       <AppSidebar />
     </a-layout-sider>
     <a-layout>

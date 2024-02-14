@@ -64,7 +64,11 @@ const items: ItemType[] = reactive([
   { type: "divider" },
   getItem("장르 목록", "6", () => h(BarsOutlined)),
   { type: "divider" },
-  getItem("작가 목록", "7", () => h(UsergroupAddOutlined)),
+  getItem(
+    h(resolveComponent("nuxt-link"), { to: "/people" }, "인물 목록"),
+    "7",
+    () => h(UsergroupAddOutlined)
+  ),
   { type: "divider" },
 ]);
 
