@@ -49,11 +49,7 @@ const items: ItemType[] = reactive([
     getItem("시리즈 목록", "2"), // 단행본, 단일 회차 구분
     getItem("회차 목록", "3"),
     getItem(
-      h(
-        resolveComponent("nuxt-link"),
-        { to: "/publish-day/list" },
-        "연재일 목록"
-      ),
+      h(resolveComponent("nuxt-link"), { to: "/publish-day" }, "연재일 목록"),
       "4"
     ),
   ]),
