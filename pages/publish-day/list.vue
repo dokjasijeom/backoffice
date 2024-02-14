@@ -30,13 +30,12 @@
 </template>
 
 <script lang="ts" setup>
-const { data, execute, error, pending } = useFetch("/backoffice/publish-days", {
-  method: "get",
-  baseURL: useRuntimeConfig().public.baseApiURL,
-  headers: {
-    Authorization: `Bearer ${(useUsers().userData as any).token}`,
-  },
-});
+const { data, execute, error, pending } = await useApi(
+  "/backoffice/publish-days",
+  {
+    method: "get",
+  }
+);
 
 const columns = [
   {

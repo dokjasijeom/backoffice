@@ -89,12 +89,8 @@ const onSubmit = () => {
   formRef.value
     .validate()
     .then(async () => {
-      const { data } = useFetch("/backoffice/publish-days/", {
+      const { data } = await useApi("/backoffice/publish-days/", {
         method: "post",
-        baseURL: useRuntimeConfig().public.baseApiURL,
-        headers: {
-          Authorization: `Bearer ${(useUsers().userData as any).token}`,
-        },
         body: {
           day: formState.day,
           displayDay: formState.displayDay,
