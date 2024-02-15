@@ -18,10 +18,10 @@
     </a-flex>
     <a-table :columns="columns" :data-source="tableData">
       <template #headerCell="{ column }">
-        <template v-if="column.key === 'title'">
+        <template v-if="column.key === 'Name'">
           <span>
             <file-text-two-tone />
-            Title
+            {{ column.title }}
           </span>
         </template>
       </template>

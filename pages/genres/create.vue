@@ -12,6 +12,13 @@
       <a-form-item ref="name" label="이름" name="name">
         <a-input v-model:value="formState.name" />
       </a-form-item>
+      <a-form-item label="장르 분류" ref="genreType" name="genreType">
+        <a-radio-group v-model:value="formState.genreType">
+          <a-radio value="common">공통</a-radio>
+          <a-radio value="webnovel">웹소설</a-radio>
+          <a-radio value="webtoon">웹툰</a-radio>
+        </a-radio-group>
+      </a-form-item>
       <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
         <a-button type="primary" @click="onSubmit">등록하기</a-button>
         <a-button style="margin-left: 10px" @click="resetForm"
@@ -29,18 +36,27 @@ import type { Rule } from "ant-design-vue/es/form";
 
 interface FormState {
   name: string;
+  genreType: string;
 }
 const formRef = ref();
 const labelCol = { span: 5 };
 const wrapperCol = { span: 13 };
 const formState: UnwrapRef<FormState> = reactive({
   name: "",
+  genreType: "common",
 });
 const rules: Record<string, Rule[]> = {
   name: [
     {
       required: true,
       message: "Please input name",
+      trigger: "change",
+    },
+  ],
+  genreType: [
+    {
+      required: true,
+      message: "Please select genreType",
       trigger: "change",
     },
   ],
@@ -54,6 +70,7 @@ const onSubmit = () => {
         method: "post",
         body: {
           name: formState.name,
+          genreType: formState.genreType,
         },
       });
       console.log("values", formState, toRaw(formState));
