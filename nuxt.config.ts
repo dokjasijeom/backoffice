@@ -22,5 +22,6 @@ export default defineNuxtConfig({
     public: {
       baseApiURL: process.env.API_BASE_URL || "http://localhost:8080/",
     },
+    thumbnailBaseUrl: process.env.THUMBNAIL_BASE_URL,
   },
 });

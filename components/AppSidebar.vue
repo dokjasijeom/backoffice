@@ -45,8 +45,11 @@ const noAuthItems: ItemType[] = reactive([
 
 const items: ItemType[] = reactive([
   getItem("콘텐츠 관리", "sub1", () => h(BookOutlined), [
-    getItem("웹툰 / 웹소설 목록", "1"),
-    getItem("시리즈 목록", "2"), // 단행본, 단일 회차 구분
+    getItem(
+      h(resolveComponent("nuxt-link"), { to: "/series" }, "웹툰 / 웹소설 목록"),
+      "1"
+    ),
+    // getItem("시리즈 목록", "2"), // 단행본, 단일 회차 구분
     getItem("회차 목록", "3"),
     getItem(
       h(resolveComponent("nuxt-link"), { to: "/publish-day" }, "연재일 목록"),
