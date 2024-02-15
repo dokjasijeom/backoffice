@@ -55,10 +55,18 @@ const items: ItemType[] = reactive([
   ]),
 
   { type: "divider" },
-  getItem("출판사 목록", "5", () => h(ShopOutlined)),
+  getItem(
+    h(resolveComponent("nuxt-link"), { to: "/publishers" }, "출판사 목록"),
+    "5",
+    () => h(ShopOutlined)
+  ),
 
   { type: "divider" },
-  getItem("장르 목록", "6", () => h(BarsOutlined)),
+  getItem(
+    h(resolveComponent("nuxt-link"), { to: "/genres" }, "장르 목록"),
+    "6",
+    () => h(BarsOutlined)
+  ),
   { type: "divider" },
   getItem(
     h(resolveComponent("nuxt-link"), { to: "/people" }, "인물 목록"),

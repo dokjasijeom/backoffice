@@ -16,7 +16,11 @@
         </NuxtLink>
       </div>
     </a-flex>
-    <a-table :columns="columns" :data-source="tableData">
+    <a-table
+      :columns="columns"
+      :data-source="tableData"
+      :pagination="{ pageSize: 20 }"
+    >
       <template #headerCell="{ column }">
         <template v-if="column.key === 'title'">
           <span>
