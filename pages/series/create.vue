@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FormPageHeader v-bind:title="`출판사 등록`" />
+    <FormPageHeader v-bind:title="`웹툰 / 웹소설 등록`" />
     <a-form
       style="border: solid 1px #ccc; border-radius: 16px; padding: 50px 16px"
       ref="formRef"
@@ -9,8 +9,8 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
     >
-      <a-form-item ref="name" label="제목" name="name">
-        <a-input v-model:value="formState.name" />
+      <a-form-item ref="title" label="작품명" name="title">
+        <a-input v-model:value="formState.title" />
       </a-form-item>
       <a-form-item ref="description" label="작품 설명" name="description">
         <a-textarea :rows="4" v-model:value="formState.description" />
@@ -29,6 +29,13 @@
         <a-radio-group v-model:value="formState.seriesType">
           <a-radio value="webnovel">웹소설</a-radio>
           <a-radio value="webtoon">웹툰</a-radio>
+        </a-radio-group>
+      </a-form-item>
+      <a-form-item label="장르" ref="genreId" name="genreId">
+        <a-radio-group v-model:value="formState.genreId">
+          <a-radio v-for="genre in genreData" :value="genre.Id">{{
+            genre.Name
+          }}</a-radio>
         </a-radio-group>
       </a-form-item>
       <a-form-item ref="image" label="표지 이미지" name="image">
@@ -65,27 +72,30 @@
 import { reactive, ref, toRaw } from "vue";
 import type { UnwrapRef } from "vue";
 import type { Rule } from "ant-design-vue/es/form";
+import type { UploadFile } from "ant-design-vue";
 
 interface FormState {
-  name: string;
+  title: string;
   description: string;
   isbn: string;
   ecn: string;
   seriesType: string;
+  genreId: string;
 }
 const formRef = ref();
 const labelCol = { span: 5 };
 const wrapperCol = { span: 13 };
 const formState: UnwrapRef<FormState> = reactive({
-  name: "",
+  title: "",
   description: "",
   isbn: "",
   ecn: "",
   seriesType: "webnovel",
+  genreId: "1",
 });
 const fileList = ref([]);
 const rules: Record<string, Rule[]> = {
-  name: [
+  title: [
     {
       required: true,
       message: "Please input name",
@@ -120,29 +130,33 @@ const rules: Record<string, Rule[]> = {
       trigger: "change",
     },
   ],
+  genreId: [
+    {
+      required: true,
+      message: "Please select genreId",
+      trigger: "change",
+    },
+  ],
 };
 
+const genreData = computed(() => useGenres().genres as GenreResponse[]);
+if (genreData.value.length == 0) useGenres().getList();
+
 const beforeUpload = (file: any) => {
-  console.log(file);
   fileList.value = fileList.value.concat(file);
   return false;
 };
 
-const imageUrl = computed(() => {
-  const [file] = unref(fileList);
-  if (file) return URL.createObjectURL(file);
-  return "";
-});
-
 const formData = computed(() => {
   const item = new FormData();
   Object.entries(unref(formState)).forEach(([key, value]) => {
-    console.log(key, value);
     if (value) {
       item.append(key, value);
     }
   });
-  item.append("image", unref(fileList)[0]);
+  fileList.value.forEach((file: UploadFile) =>
+    item.append("image", file.originFileObj!)
+  );
   return item;
 });
 
@@ -152,12 +166,7 @@ const onSubmit = () => {
     .then(async () => {
       const { data } = await useApi("/backoffice/series/", {
         method: "post",
-        body: unref(formData),
-        headers: {
-          "Content-Type":
-            "multipart/form-data; boundary=<calculated when request is sent>",
-          "Content-Length": "<calculated when request is sent>",
-        },
+        body: formData.value,
       });
       console.log("values", formState, toRaw(formState));
       if (data) {

@@ -34,9 +34,8 @@
 </template>
 
 <script lang="ts" setup>
-const { data, execute, error, pending } = await useApi("/backoffice/genres", {
-  method: "get",
-});
+const genreStore = useGenres();
+await genreStore.getList();
 
 const columns = [
   {
@@ -61,5 +60,5 @@ const columns = [
   },
 ];
 
-const tableData = computed(() => (data.value as any).data);
+const tableData = computed(() => genreStore.genres);
 </script>
