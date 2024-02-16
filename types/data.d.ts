@@ -4,3 +4,10 @@ interface GenreResponse {
   HashId: string;
   ParentGenreId: number;
 }
+
+interface PublishDayResponse {
+  Id: number;
+  Day: string;
+  DisplayDay: string;
+  DisplayOrder: number;
+}

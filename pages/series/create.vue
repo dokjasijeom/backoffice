@@ -38,6 +38,15 @@
           }}</a-radio>
         </a-radio-group>
       </a-form-item>
+      <a-form-item label="연재일" ref="publishDayId" name="publishDayId">
+        <a-radio-group v-model:value="formState.publishDayId">
+          <a-radio
+            v-for="publishDay in publishDayData"
+            :value="publishDay.Id"
+            >{{ publishDay.DisplayDay }}</a-radio
+          >
+        </a-radio-group>
+      </a-form-item>
       <a-form-item ref="image" label="표지 이미지" name="image">
         <a-upload
           v-model:file-list="fileList"
@@ -45,12 +54,6 @@
           :before-upload="beforeUpload"
           :multiple="false"
         >
-          <!-- <img
-            v-if="imageUrl"
-            style="position: relative; width: 100%; height: 100%"
-            :src="imageUrl"
-            alt="preview"
-          /> -->
           <div>
             <PlusOutlined />
             <div style="margin-top: 8px">Upload</div>
@@ -81,6 +84,7 @@ interface FormState {
   ecn: string;
   seriesType: string;
   genreId: string;
+  publishDayId: string;
 }
 const formRef = ref();
 const labelCol = { span: 5 };
@@ -92,6 +96,7 @@ const formState: UnwrapRef<FormState> = reactive({
   ecn: "",
   seriesType: "webnovel",
   genreId: "1",
+  publishDayId: "1",
 });
 const fileList = ref([]);
 const rules: Record<string, Rule[]> = {
@@ -137,10 +142,28 @@ const rules: Record<string, Rule[]> = {
       trigger: "change",
     },
   ],
+  publishDayId: [
+    {
+      required: true,
+      message: "Please select publishDayId",
+      trigger: "change",
+    },
+  ],
+  image: [
+    {
+      required: true,
+      message: "Please select image file",
+      trigger: "change",
+    },
+  ],
 };
 
 const genreData = computed(() => useGenres().genres as GenreResponse[]);
 if (genreData.value.length == 0) useGenres().getList();
+const publishDayData = computed(
+  () => usePublishDays().publishDays as PublishDayResponse[]
+);
+if (publishDayData.value.length == 0) usePublishDays().getList();
 
 const beforeUpload = (file: any) => {
   fileList.value = fileList.value.concat(file);
