@@ -52,6 +52,21 @@
           </a-radio>
         </a-radio-group>
       </a-form-item>
+      <a-form-item label="작가" ref="personId" name="personId">
+        <a-radio-group v-model:value="formState.personId">
+          <a-radio v-for="person in peopleData" :value="person.Id">
+            {{ person.Name }}
+          </a-radio>
+        </a-radio-group>
+      </a-form-item>
+      <!-- <a-form-item label="작가" ref="personId" name="personId">
+        <a-select
+          v-model:value="formState.personId"
+          placeholder="Select a person"
+          style="width: 200px"
+          :options="peopleData"
+        ></a-select>
+      </a-form-item> -->
       <a-form-item ref="image" label="표지 이미지" name="image">
         <a-upload
           v-model:file-list="fileList"
@@ -91,6 +106,7 @@ interface FormState {
   genreId: string;
   publishDayId: string;
   providerId: string;
+  personId: string;
 }
 const formRef = ref();
 const labelCol = { span: 5 };
@@ -104,6 +120,7 @@ const formState: UnwrapRef<FormState> = reactive({
   genreId: "1",
   publishDayId: "1",
   providerId: "1",
+  personId: "",
 });
 const fileList = ref([]);
 const rules: Record<string, Rule[]> = {
@@ -163,9 +180,16 @@ const rules: Record<string, Rule[]> = {
       trigger: "change",
     },
   ],
-  image: [
+  personId: [
     {
       required: true,
+      message: "Please select personId",
+      trigger: "change",
+    },
+  ],
+  image: [
+    {
+      required: false,
       message: "Please select image file",
       trigger: "change",
     },
@@ -179,7 +203,15 @@ const publishDayData = computed(
 const providerData = computed(
   () => useProviders().providers as ProviderResponse[]
 );
-const peopleData = computed(() => usePeople().people as PersonResponse[]);
+const peopleData = computed(
+  () => usePeople().people as PersonResponse[]
+  // return people.map((person) => {
+  //   return {
+  //     value: person.Id,
+  //     label: person.Name,
+  //   };
+  // });
+);
 
 if (genreData.value.length == 0) useGenres().getList();
 if (publishDayData.value.length == 0) usePublishDays().getList();
