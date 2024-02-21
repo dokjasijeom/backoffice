@@ -16,6 +16,7 @@ import {
   BarsOutlined,
   UsergroupAddOutlined,
   UserOutlined,
+  BankOutlined,
 } from "@ant-design/icons-vue";
 import type { MenuProps, ItemType } from "ant-design-vue";
 const userStore = useUsers();
@@ -59,21 +60,28 @@ const items: ItemType[] = reactive([
 
   { type: "divider" },
   getItem(
-    h(resolveComponent("nuxt-link"), { to: "/publishers" }, "출판사 목록"),
+    h(resolveComponent("nuxt-link"), { to: "/providers" }, "플랫폼 목록"),
     "5",
+    () => h(BankOutlined)
+  ),
+
+  { type: "divider" },
+  getItem(
+    h(resolveComponent("nuxt-link"), { to: "/publishers" }, "출판사 목록"),
+    "6",
     () => h(ShopOutlined)
   ),
 
   { type: "divider" },
   getItem(
     h(resolveComponent("nuxt-link"), { to: "/genres" }, "장르 목록"),
-    "6",
+    "7",
     () => h(BarsOutlined)
   ),
   { type: "divider" },
   getItem(
     h(resolveComponent("nuxt-link"), { to: "/people" }, "인물 목록"),
-    "7",
+    "8",
     () => h(UsergroupAddOutlined)
   ),
   { type: "divider" },
