@@ -33,18 +33,23 @@
       </a-form-item>
       <a-form-item label="장르" ref="genreId" name="genreId">
         <a-radio-group v-model:value="formState.genreId">
-          <a-radio v-for="genre in genreData" :value="genre.Id">{{
-            genre.Name
-          }}</a-radio>
+          <a-radio v-for="genre in genreData" :value="genre.Id">
+            {{ genre.Name }}
+          </a-radio>
         </a-radio-group>
       </a-form-item>
       <a-form-item label="연재일" ref="publishDayId" name="publishDayId">
         <a-radio-group v-model:value="formState.publishDayId">
-          <a-radio
-            v-for="publishDay in publishDayData"
-            :value="publishDay.Id"
-            >{{ publishDay.DisplayDay }}</a-radio
-          >
+          <a-radio v-for="publishDay in publishDayData" :value="publishDay.Id">
+            {{ publishDay.DisplayDay }}
+          </a-radio>
+        </a-radio-group>
+      </a-form-item>
+      <a-form-item label="플랫폼" ref="providerId" name="providerId">
+        <a-radio-group v-model:value="formState.providerId">
+          <a-radio v-for="provider in providerData" :value="provider.Id">
+            {{ provider.DisplayName }}
+          </a-radio>
         </a-radio-group>
       </a-form-item>
       <a-form-item ref="image" label="표지 이미지" name="image">
@@ -85,6 +90,7 @@ interface FormState {
   seriesType: string;
   genreId: string;
   publishDayId: string;
+  providerId: string;
 }
 const formRef = ref();
 const labelCol = { span: 5 };
@@ -97,6 +103,7 @@ const formState: UnwrapRef<FormState> = reactive({
   seriesType: "webnovel",
   genreId: "1",
   publishDayId: "1",
+  providerId: "1",
 });
 const fileList = ref([]);
 const rules: Record<string, Rule[]> = {
@@ -149,6 +156,13 @@ const rules: Record<string, Rule[]> = {
       trigger: "change",
     },
   ],
+  providerId: [
+    {
+      required: true,
+      message: "Please select providerId",
+      trigger: "change",
+    },
+  ],
   image: [
     {
       required: true,
@@ -159,11 +173,18 @@ const rules: Record<string, Rule[]> = {
 };
 
 const genreData = computed(() => useGenres().genres as GenreResponse[]);
-if (genreData.value.length == 0) useGenres().getList();
 const publishDayData = computed(
   () => usePublishDays().publishDays as PublishDayResponse[]
 );
+const providerData = computed(
+  () => useProviders().providers as ProviderResponse[]
+);
+const peopleData = computed(() => usePeople().people as PersonResponse[]);
+
+if (genreData.value.length == 0) useGenres().getList();
 if (publishDayData.value.length == 0) usePublishDays().getList();
+if (providerData.value.length == 0) useProviders().getList();
+if (peopleData.value.length == 0) usePeople().getList();
 
 const beforeUpload = (file: any) => {
   fileList.value = fileList.value.concat(file);
