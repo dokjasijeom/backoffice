@@ -44,18 +44,18 @@ const { data, execute, error, pending } = await useApi(
 const columns = [
   {
     title: "아이디",
-    dataIndex: "Id",
-    key: "Id",
+    dataIndex: "id",
+    key: "id",
   },
   {
     title: "이름",
-    dataIndex: "Name",
-    key: "Name",
+    dataIndex: "name",
+    key: "name",
   },
   {
     title: "해시 아이디",
-    dataIndex: "HashId",
-    key: "HashId",
+    dataIndex: "hashId",
+    key: "hashId",
   },
 ];
 

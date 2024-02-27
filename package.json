@@ -12,12 +12,13 @@
   "devDependencies": {
     "@ant-design-vue/nuxt": "^1.4.1",
     "@nuxt/devtools": "1.0.8",
-    "nuxt": "^3.10.1",
+    "nuxt": "3.9.3",
     "vue": "^3.4.18",
     "vue-router": "^4.2.5"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
+    "@toss/hangul": "^1.6.1",
     "ant-design-vue": "4.x",
     "pinia": "^2.1.7"
   }

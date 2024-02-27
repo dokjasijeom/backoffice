@@ -40,23 +40,23 @@ await providerStore.getList();
 const columns = [
   {
     title: "아이디",
-    dataIndex: "Id",
-    key: "Id",
+    dataIndex: "id",
+    key: "id",
   },
   {
     title: "해시 아이디",
-    dataIndex: "HashId",
-    key: "HashId",
+    dataIndex: "hashId",
+    key: "hashId",
   },
   {
     title: "이름",
-    dataIndex: "Name",
-    key: "Name",
+    dataIndex: "name",
+    key: "name",
   },
   {
     title: "표시 이름",
-    dataIndex: "DisplayName",
-    key: "DisplayName",
+    dataIndex: "displayName",
+    key: "displayName",
   },
 ];
 

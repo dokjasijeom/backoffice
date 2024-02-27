@@ -44,23 +44,23 @@ const { data, execute, error, pending } = await useApi(
 const columns = [
   {
     title: "Id",
-    dataIndex: "Id",
-    key: "Id",
+    dataIndex: "id",
+    key: "id",
   },
   {
     title: "Day",
-    dataIndex: "Day",
-    key: "Day",
+    dataIndex: "day",
+    key: "day",
   },
   {
     title: "DisplayDay",
-    dataIndex: "DisplayDay",
-    key: "DisplayDay",
+    dataIndex: "displayDay",
+    key: "displayDay",
   },
   {
     title: "DisplayOrder",
-    dataIndex: "DisplayOrder",
-    key: "DisplayOrder",
+    dataIndex: "displayOrder",
+    key: "displayOrder",
   },
 ];
 

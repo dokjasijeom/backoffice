@@ -22,13 +22,13 @@
       :pagination="{ pageSize: 20 }"
     >
       <template #headerCell="{ column }">
-        <template v-if="column.key === 'Title'">
+        <template v-if="column.key === 'title'">
           <span>
             <file-text-two-tone />
             {{ column.title }}
           </span>
         </template>
-        <template v-if="column.key === 'Thumbnail'">
+        <template v-if="column.key === 'thumbnail'">
           <span>
             <FileImageOutlined />
             {{ column.title }}
@@ -36,11 +36,8 @@
         </template>
       </template>
       <template #bodyCell="{ column, value }">
-        <template v-if="column.key === 'Thumbnail'">
-          <img
-            :src="`${useRuntimeConfig().thumbnailBaseUrl}${value}`"
-            width="80"
-          />
+        <template v-if="column.key === 'thumbnail'">
+          <img :src="`${value}`" width="80" />
         </template>
       </template>
     </a-table>
@@ -55,29 +52,29 @@ const { data, execute, error, pending } = await useApi("/backoffice/series", {
 const columns = [
   {
     title: "아이디",
-    dataIndex: "Id",
-    key: "Id",
+    dataIndex: "id",
+    key: "id",
   },
 
   {
     title: "해시 아이디",
-    dataIndex: "HashId",
-    key: "HashId",
+    dataIndex: "hashId",
+    key: "hashId",
   },
   {
     title: "표지 이미지",
-    dataIndex: "Thumbnail",
-    key: "Thumbnail",
+    dataIndex: "thumbnail",
+    key: "thumbnail",
   },
   {
     title: "제목",
-    dataIndex: "Title",
-    key: "Title",
+    dataIndex: "title",
+    key: "title",
   },
   {
     title: "설명",
-    dataIndex: "Description",
-    key: "Description",
+    dataIndex: "description",
+    key: "description",
   },
 ];
 

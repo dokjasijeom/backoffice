@@ -1,37 +1,37 @@
 interface GenreResponse {
-  Id: number;
-  Name: string;
-  HashId: string;
-  ParentGenreId: number;
+  id: number;
+  name: string;
+  hashId: string;
+  parentGenreId?: number;
 }
 
 interface PublishDayResponse {
-  Id: number;
-  Day: string;
-  DisplayDay: string;
-  DisplayOrder: number;
+  id: number;
+  day: string;
+  displayDay: string;
+  displayOrder: number;
 }
 
 interface ProviderResponse {
-  Id: number;
-  HashId: string;
-  Name: string;
-  DisplayName: string;
-  Description?: string;
-  HomepageUrl?: string;
-  Series?: [];
-  CreatedAt: string;
-  UpdatedAt: string;
-  DeletedAt: string;
+  id: number;
+  hashId: string;
+  name: string;
+  displayName: string;
+  description?: string;
+  homepageUrl?: string;
+  series?: [];
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
 }
 
 interface PersonResponse {
-  Id: number;
-  HashId: string;
-  Name: string;
-  Description?: string;
-  Series?: [];
-  CreatedAt: string;
-  UpdatedAt: string;
-  DeletedAt: string;
+  id: number;
+  hashId: string;
+  name: string;
+  description?: string;
+  series?: [];
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
 }

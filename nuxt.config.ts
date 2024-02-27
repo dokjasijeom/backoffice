@@ -14,9 +14,6 @@ export default defineNuxtConfig({
   future: {
     typescriptBundlerResolution: false,
   },
-  experimental: {
-    viewTransition: true,
-  },
   css: ["@/assets/css/reset.css"],
   runtimeConfig: {
     public: {

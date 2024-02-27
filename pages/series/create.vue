@@ -53,20 +53,16 @@
         </a-radio-group>
       </a-form-item>
       <a-form-item label="작가" ref="personId" name="personId">
-        <a-radio-group v-model:value="formState.personId">
-          <a-radio v-for="person in peopleData" :value="person.Id">
-            {{ person.Name }}
-          </a-radio>
-        </a-radio-group>
-      </a-form-item>
-      <!-- <a-form-item label="작가" ref="personId" name="personId">
         <a-select
           v-model:value="formState.personId"
+          show-search
           placeholder="Select a person"
-          style="width: 200px"
-          :options="peopleData"
+          :options="selectPeopleData"
+          :filter-option="filterPeopleData"
+          @foucs="() => console.log('focus')"
+          @blur="() => console.log('blur')"
         ></a-select>
-      </a-form-item> -->
+      </a-form-item>
       <a-form-item ref="image" label="표지 이미지" name="image">
         <a-upload
           v-model:file-list="fileList"
@@ -95,7 +91,8 @@
 import { reactive, ref, toRaw } from "vue";
 import type { UnwrapRef } from "vue";
 import type { Rule } from "ant-design-vue/es/form";
-import type { UploadFile } from "ant-design-vue";
+import type { UploadFile, SelectProps } from "ant-design-vue";
+import { hangulIncludes } from "@toss/hangul";
 
 interface FormState {
   title: string;
@@ -106,7 +103,7 @@ interface FormState {
   genreId: string;
   publishDayId: string;
   providerId: string;
-  personId: string;
+  personId?: string;
 }
 const formRef = ref();
 const labelCol = { span: 5 };
@@ -120,7 +117,7 @@ const formState: UnwrapRef<FormState> = reactive({
   genreId: "1",
   publishDayId: "1",
   providerId: "1",
-  personId: "",
+  personId: undefined,
 });
 const fileList = ref([]);
 const rules: Record<string, Rule[]> = {
@@ -203,15 +200,24 @@ const publishDayData = computed(
 const providerData = computed(
   () => useProviders().providers as ProviderResponse[]
 );
-const peopleData = computed(
-  () => usePeople().people as PersonResponse[]
-  // return people.map((person) => {
-  //   return {
-  //     value: person.Id,
-  //     label: person.Name,
-  //   };
-  // });
-);
+const peopleData = computed(() => usePeople().people as PersonResponse[]);
+
+const selectPeopleData = computed(() => {
+  const response: SelectProps["options"] = usePeople().people.map(
+    (person: PersonResponse) => {
+      return {
+        value: person.Id,
+        label: person.Name,
+      };
+    }
+  );
+
+  return response;
+});
+
+const filterPeopleData = (input: string, option: any) => {
+  return hangulIncludes(option.label, input);
+};
 
 if (genreData.value.length == 0) useGenres().getList();
 if (publishDayData.value.length == 0) usePublishDays().getList();
