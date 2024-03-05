@@ -33,22 +33,22 @@
       </a-form-item>
       <a-form-item label="장르" ref="genreId" name="genreId">
         <a-radio-group v-model:value="formState.genreId">
-          <a-radio v-for="genre in genreData" :value="genre.Id">
-            {{ genre.Name }}
+          <a-radio v-for="genre in genreData" :value="genre.id">
+            {{ genre.name }}
           </a-radio>
         </a-radio-group>
       </a-form-item>
       <a-form-item label="연재일" ref="publishDayId" name="publishDayId">
         <a-radio-group v-model:value="formState.publishDayId">
-          <a-radio v-for="publishDay in publishDayData" :value="publishDay.Id">
-            {{ publishDay.DisplayDay }}
+          <a-radio v-for="publishDay in publishDayData" :value="publishDay.id">
+            {{ publishDay.displayDay }}
           </a-radio>
         </a-radio-group>
       </a-form-item>
       <a-form-item label="플랫폼" ref="providerId" name="providerId">
         <a-radio-group v-model:value="formState.providerId">
-          <a-radio v-for="provider in providerData" :value="provider.Id">
-            {{ provider.DisplayName }}
+          <a-radio v-for="provider in providerData" :value="provider.id">
+            {{ provider.displayName }}
           </a-radio>
         </a-radio-group>
       </a-form-item>
@@ -206,8 +206,8 @@ const selectPeopleData = computed(() => {
   const response: SelectProps["options"] = usePeople().people.map(
     (person: PersonResponse) => {
       return {
-        value: person.Id,
-        label: person.Name,
+        value: person.id,
+        label: person.name,
       };
     }
   );

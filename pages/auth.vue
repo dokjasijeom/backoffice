@@ -102,7 +102,7 @@ const disabled = computed(() => {
 
 onBeforeMount(() => {
   if (useUsers().userData) {
-    navigateTo("/");
+    navigateTo("/series");
   }
 });
 </script>

@@ -20,6 +20,16 @@
       :columns="columns"
       :data-source="tableData"
       :pagination="{ pageSize: 20 }"
+      :custom-row="
+        (record) => {
+          return {
+            onClick: (event) => {
+              console.log(event);
+              return navigateTo(`/series/${record.id}`);
+            },
+          };
+        }
+      "
     >
       <template #headerCell="{ column }">
         <template v-if="column.key === 'title'">
@@ -70,11 +80,6 @@ const columns = [
     title: "제목",
     dataIndex: "title",
     key: "title",
-  },
-  {
-    title: "설명",
-    dataIndex: "description",
-    key: "description",
   },
 ];
 

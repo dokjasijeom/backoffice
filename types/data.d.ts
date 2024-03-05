@@ -35,3 +35,36 @@ interface PersonResponse {
   updatedAt: string;
   deletedAt: string;
 }
+
+interface PublisherResponse {
+  id: number;
+  hashId: string;
+  name: string;
+  description?: string;
+  homepageUrl?: string;
+  series?: SeriesResponse[];
+}
+
+interface SeriesResponse {
+  id: number;
+  hashId: string;
+  title: string;
+  description?: string;
+  isbn?: string;
+  ecn?: string;
+  seriesType: "webnovel" | "webtoon";
+  genres?: GenreResponse[];
+  publishDays?: PublishDayResponse[];
+  authors?: PersonResponse[];
+  providers?: ProviderResponse[];
+  publishers?: PublisherResponse[];
+  episodes?: EpisodeResponse[];
+}
+
+interface EpiosdeResponse {
+  id: number;
+  title: string;
+  episodeNumber: number;
+  thumbnail: string;
+  series?: SeriesResponse[];
+}
