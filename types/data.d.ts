@@ -68,3 +68,12 @@ interface EpiosdeResponse {
   thumbnail: string;
   series?: SeriesResponse[];
 }
+
+interface PublisherResponse {
+  id: number;
+  hashId: string;
+  name: string;
+  description?: string;
+  homepageUrl?: string;
+  series?: SeriesResponse[];
+}
