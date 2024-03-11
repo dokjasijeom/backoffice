@@ -31,26 +31,57 @@
           <a-radio value="webtoon">웹툰</a-radio>
         </a-radio-group>
       </a-form-item>
-      <a-form-item label="장르" ref="genreId" name="genreId">
-        <a-radio-group v-model:value="formState.genreId">
-          <a-radio v-for="genre in genreData" :value="genre.id">
-            {{ genre.name }}
-          </a-radio>
-        </a-radio-group>
+      <a-form-item label="장르" ref="genreIds" name="genreIds">
+        <a-checkbox
+          v-model:checked="genreState.checkAll"
+          :indeterminate="genreState.indeterminate"
+          @change="onCheckGenreAllChange"
+          >전체 선택</a-checkbox
+        >
+        <a-checkbox-group
+          style="margin-top: 8px"
+          v-model:value="genreState.checkedList"
+          :options="genreOptions"
+        />
       </a-form-item>
-      <a-form-item label="연재일" ref="publishDayId" name="publishDayId">
-        <a-radio-group v-model:value="formState.publishDayId">
-          <a-radio v-for="publishDay in publishDayData" :value="publishDay.id">
-            {{ publishDay.displayDay }}
-          </a-radio>
-        </a-radio-group>
+      <a-form-item label="연재일" ref="publishDayIds" name="publishDayIds">
+        <a-checkbox
+          v-model:checked="publishDayState.checkAll"
+          :indeterminate="publishDayState.indeterminate"
+          @change="onCheckPublishDayAllChange"
+          >전체 선택</a-checkbox
+        >
+        <a-checkbox-group
+          style="margin-top: 8px"
+          v-model:value="publishDayState.checkedList"
+          :options="publishDayOptions"
+        />
       </a-form-item>
-      <a-form-item label="플랫폼" ref="providerId" name="providerId">
-        <a-radio-group v-model:value="formState.providerId">
-          <a-radio v-for="provider in providerData" :value="provider.id">
-            {{ provider.displayName }}
-          </a-radio>
-        </a-radio-group>
+      <a-form-item label="플랫폼" ref="providerIds" name="providerIds">
+        <div>
+          <a-checkbox
+            v-model:checked="providerState.checkAll"
+            :indeterminate="providerState.indeterminate"
+            @change="onCheckProviderAllChange"
+            >전체 선택</a-checkbox
+          >
+        </div>
+        <a-checkbox-group
+          style="margin-top: 8px"
+          v-model:value="providerState.checkedList"
+          :options="providerOptions"
+        />
+      </a-form-item>
+      <a-form-item label="출판사" ref="publisherId" name="publisherId">
+        <a-select
+          v-model:value="formState.publisherId"
+          show-search
+          placeholder="Select a Publisher"
+          :options="selectPublisherData"
+          :filter-option="filterPublisherData"
+          @foucs="() => console.log('focus')"
+          @blur="() => console.log('blur')"
+        ></a-select>
       </a-form-item>
       <a-form-item label="작가" ref="personId" name="personId">
         <a-select
@@ -110,14 +141,15 @@ import { hangulIncludes } from "@toss/hangul";
 
 interface FormState {
   title: string;
-  description: string | undefined;
-  isbn: string | undefined;
-  ecn: string | undefined;
+  description: string;
+  isbn: string;
+  ecn: string;
   seriesType: string;
-  genreId: string;
-  publishDayId: string;
-  providerId: string;
   personId?: string;
+  genreIds?: number[];
+  providerIds?: number[];
+  publishDayIds?: number[];
+  publisherId?: string;
 }
 const formRef = ref();
 const labelCol = { span: 5 };
@@ -138,15 +170,112 @@ const seriesData = computed(
 
 const formState: UnwrapRef<FormState> = reactive({
   title: seriesData.value!.title,
-  description: seriesData.value!.description,
-  isbn: seriesData.value!.isbn,
-  ecn: seriesData.value!.ecn,
+  description: seriesData.value!.description ?? "",
+  isbn: seriesData.value!.isbn ?? "",
+  ecn: seriesData.value!.ecn ?? "",
   seriesType: seriesData.value!.seriesType,
-  genreId: "1",
-  publishDayId: "1",
-  providerId: "1",
-  personId: undefined,
+  personId: seriesData.value!.authors![0]
+    ? seriesData.value!.authors![0].id.toString()
+    : undefined,
+  publisherId: seriesData.value!.publisher?.id
+    ? seriesData.value.publisher.id.toString()
+    : undefined,
+  genreIds: [],
+  providerIds: [],
+  publishDayIds: [],
 });
+
+const genreOptions = computed(() =>
+  genreData.value.map((genre) => {
+    return { label: genre.name, value: genre.id };
+  })
+);
+
+const genreState = reactive({
+  indeterminate: false,
+  checkAll: false,
+  checkedList: [] as number[],
+});
+
+const onCheckGenreAllChange = (e: any) => {
+  Object.assign(genreState, {
+    checkedList: e.target.checked ? genreOptions.value.map((v) => v.value) : [],
+    indeterminate: false,
+  });
+};
+
+watch(
+  () => genreState.checkedList,
+  (val) => {
+    formState.genreIds = genreState.checkedList;
+    genreState.indeterminate =
+      !!val.length && val.length < genreOptions.value.length;
+    genreState.checkAll = val.length === genreOptions.value.length;
+  }
+);
+
+const publishDayOptions = computed(() =>
+  publishDayData.value.map((day) => {
+    return { label: day.displayDay, value: day.id };
+  })
+);
+
+const publishDayState = reactive({
+  indeterminate: false,
+  checkAll: false,
+  checkedList: [] as number[],
+});
+
+const onCheckPublishDayAllChange = (e: any) => {
+  Object.assign(publishDayState, {
+    checkedList: e.target.checked
+      ? publishDayOptions.value.map((v) => v.value)
+      : [],
+    indeterminate: false,
+  });
+};
+
+watch(
+  () => publishDayState.checkedList,
+  (val) => {
+    formState.publishDayIds = publishDayState.checkedList;
+    publishDayState.indeterminate =
+      !!val.length && val.length < publishDayOptions.value.length;
+    publishDayState.checkAll = val.length === publishDayOptions.value.length;
+  }
+);
+
+const providerOptions = computed(() =>
+  providerData.value.map((provider) => {
+    return { label: provider.displayName, value: provider.id };
+  })
+);
+
+const providerState = reactive({
+  indeterminate: false,
+  checkAll: false,
+  checkedList: [] as number[],
+});
+
+const onCheckProviderAllChange = (e: any) => {
+  Object.assign(providerState, {
+    checkedList: e.target.checked
+      ? providerOptions.value.map((v) => v.value)
+      : [],
+    indeterminate: false,
+  });
+};
+
+watch(
+  () => providerState.checkedList,
+  (val) => {
+    formState.providerIds = providerState.checkedList;
+    providerState.indeterminate =
+      !!val.length && val.length < providerOptions.value.length;
+    providerState.checkAll = val.length === providerOptions.value.length;
+  }
+);
+
 const fileList = ref([]);
 const rules: Record<string, Rule[]> = {
   title: [
@@ -184,27 +313,6 @@ const rules: Record<string, Rule[]> = {
       trigger: "change",
     },
   ],
-  genreId: [
-    {
-      required: true,
-      message: "Please select genreId",
-      trigger: "change",
-    },
-  ],
-  publishDayId: [
-    {
-      required: true,
-      message: "Please select publishDayId",
-      trigger: "change",
-    },
-  ],
-  providerId: [
-    {
-      required: true,
-      message: "Please select providerId",
-      trigger: "change",
-    },
-  ],
   personId: [
     {
       required: true,
@@ -229,12 +337,15 @@ const providerData = computed(
   () => useProviders().providers as ProviderResponse[]
 );
 const peopleData = computed(() => usePeople().people as PersonResponse[]);
+const publisherData = computed(
+  () => usePublishers().publishers as PublisherResponse[]
+);
 
 const selectPeopleData = computed(() => {
   const response: SelectProps["options"] = usePeople().people.map(
     (person: PersonResponse) => {
       return {
-        value: person.id,
+        value: person.id.toString(),
         label: person.name,
       };
     }
@@ -247,10 +358,34 @@ const filterPeopleData = (input: string, option: any) => {
   return hangulIncludes(option.label, input);
 };
 
+const selectPublisherData = computed(() => {
+  const response: SelectProps["options"] = usePublishers().publishers.map(
+    (publisher: PublisherResponse) => {
+      return {
+        value: publisher.id.toString(),
+        label: publisher.name,
+      };
+    }
+  );
+
+  return response;
+});
+
+const filterPublisherData = (input: string, option: any) => {
+  return hangulIncludes(option.label, input);
+};
+
 if (genreData.value.length == 0) useGenres().getList();
 if (publishDayData.value.length == 0) usePublishDays().getList();
 if (providerData.value.length == 0) useProviders().getList();
 if (peopleData.value.length == 0) usePeople().getList();
+if (publisherData.value.length == 0) usePublishers().getList();
+if (seriesData.value != null) {
+  genreState.checkedList = seriesData.value.genres!.map((v) => v.id);
+  providerState.checkedList = seriesData.value.providers!.map((v) => v.id);
+  publishDayState.checkedList = seriesData.value.publishDays!.map((v) => v.id);
+  console.log(formState);
+}
 
 const beforeUpload = (file: any) => {
   fileList.value = fileList.value.concat(file);
@@ -260,7 +395,11 @@ const beforeUpload = (file: any) => {
 const formData = computed(() => {
   const item = new FormData();
   Object.entries(unref(formState)).forEach(([key, value]) => {
-    if (value) {
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        item.append(key, value[i].toString());
+      }
+    } else {
       item.append(key, value);
     }
   });
@@ -274,10 +413,13 @@ const onSubmit = () => {
   formRef.value
     .validate()
     .then(async () => {
-      const { data } = await useApi("/backoffice/series/", {
-        method: "post",
-        body: formData.value,
-      });
+      const { data } = await useApi(
+        `/backoffice/series/${useRoute().params.id}`,
+        {
+          method: "patch",
+          body: formData.value,
+        }
+      );
       console.log("values", formState, toRaw(formState));
       if (data) {
         console.log(data);

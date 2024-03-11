@@ -55,15 +55,19 @@
 </template>
 
 <script lang="ts" setup>
+import type { TableColumnType, TableProps } from "ant-design-vue";
 const { data, execute, error, pending } = await useApi("/backoffice/series", {
   method: "get",
 });
 
-const columns = [
+const columns: TableColumnType<any>[] = [
   {
     title: "아이디",
     dataIndex: "id",
     key: "id",
+    sorter: (a: any, b: any) => a.id - b.id,
+    defaultSortOrder: "descend",
+    sortDirections: ["descend", "ascend"],
   },
 
   {

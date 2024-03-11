@@ -57,7 +57,7 @@ interface SeriesResponse {
   publishDays?: PublishDayResponse[];
   authors?: PersonResponse[];
   providers?: ProviderResponse[];
-  publishers?: PublisherResponse[];
+  publisher?: PublisherResponse;
   episodes?: EpisodeResponse[];
 }
 

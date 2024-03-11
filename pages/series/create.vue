@@ -43,11 +43,6 @@
           v-model:value="genreState.checkedList"
           :options="genreOptions"
         />
-        <!-- <a-radio-group v-model:value="formState.genreId">
-          <a-radio v-for="genre in genreData" :value="genre.id">
-            {{ genre.name }}
-          </a-radio>
-        </a-radio-group> -->
       </a-form-item>
       <a-form-item label="연재일" ref="publishDayId" name="publishDayId">
         <a-checkbox
@@ -61,11 +56,6 @@
           v-model:value="publishDayState.checkedList"
           :options="publishDayOptions"
         />
-        <!-- <a-radio-group v-model:value="formState.publishDayId">
-          <a-radio v-for="publishDay in publishDayData" :value="publishDay.id">
-            {{ publishDay.displayDay }}
-          </a-radio>
-        </a-radio-group> -->
       </a-form-item>
       <a-form-item label="플랫폼" ref="providerId" name="providerId">
         <div>
@@ -81,11 +71,6 @@
           v-model:value="providerState.checkedList"
           :options="providerOptions"
         />
-        <!-- <a-radio-group v-model:value="formState.providerId">
-          <a-radio v-for="provider in providerData" :value="provider.id">
-            {{ provider.displayName }}
-          </a-radio>
-        </a-radio-group> -->
       </a-form-item>
       <a-form-item label="출판사" ref="publisherId" name="publisherId">
         <a-select
@@ -146,9 +131,6 @@ interface FormState {
   isbn: string;
   ecn: string;
   seriesType: string;
-  genreId: string;
-  publishDayId: string;
-  providerId: string;
   personId?: string;
   genreIds?: number[];
   providerIds?: number[];
@@ -164,9 +146,6 @@ const formState: UnwrapRef<FormState> = reactive({
   isbn: "",
   ecn: "",
   seriesType: "webnovel",
-  genreId: "1",
-  publishDayId: "1",
-  providerId: "1",
   personId: undefined,
   publisherId: undefined,
   genreIds: [],
