@@ -59,6 +59,7 @@ interface SeriesResponse {
   providers?: ProviderResponse[];
   publisher?: PublisherResponse;
   episodes?: EpisodeResponse[];
+  isComplete: boolean;
 }
 
 interface EpiosdeResponse {

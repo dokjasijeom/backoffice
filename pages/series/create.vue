@@ -72,20 +72,19 @@
           :options="providerOptions"
         />
       </a-form-item>
-      <a-form-item label="출판사" ref="publisherId" name="publisherId">
+      <a-form-item label="출판사">
         <a-select
-          v-model:value="formState.publisherId"
-          show-search
-          placeholder="Select a Publisher"
-          :options="selectPublisherData"
-          :filter-option="filterPublisherData"
-          @foucs="() => console.log('focus')"
-          @blur="() => console.log('blur')"
-        ></a-select>
+          v-if="publisherOptions"
+          v-model:value="publisherState"
+          mode="multiple"
+          :options="publisherOptions"
+          option-label-prop="label"
+        >
+        </a-select>
       </a-form-item>
-      <a-form-item label="작가" ref="personId" name="personId">
+      <a-form-item label="글 작가" ref="authorId" name="authorId">
         <a-select
-          v-model:value="formState.personId"
+          v-model:value="formState.authorId"
           show-search
           placeholder="Select a person"
           :options="selectPeopleData"
@@ -93,6 +92,38 @@
           @foucs="() => console.log('focus')"
           @blur="() => console.log('blur')"
         ></a-select>
+      </a-form-item>
+      <a-form-item label="그림 작가" ref="illustratorId" name="illustratorId">
+        <a-select
+          v-model:value="formState.illustratorId"
+          show-search
+          placeholder="Select a person"
+          :options="selectPeopleData"
+          :filter-option="filterPeopleData"
+          @foucs="() => console.log('focus')"
+          @blur="() => console.log('blur')"
+        ></a-select>
+      </a-form-item>
+      <a-form-item
+        label="원작 작가"
+        ref="originalAuthorId"
+        name="originalAuthorId"
+      >
+        <a-select
+          v-model:value="formState.originalAuthorId"
+          show-search
+          placeholder="Select a person"
+          :options="selectPeopleData"
+          :filter-option="filterPeopleData"
+          @foucs="() => console.log('focus')"
+          @blur="() => console.log('blur')"
+        ></a-select>
+      </a-form-item>
+      <a-form-item label="완결 여부" ref="isComplete" name="isComplete">
+        <a-radio-group v-model:value="formState.isComplete">
+          <a-radio :value="false">연재중</a-radio>
+          <a-radio :value="true">완결</a-radio>
+        </a-radio-group>
       </a-form-item>
       <a-form-item ref="image" label="표지 이미지" name="image">
         <a-upload
@@ -132,10 +163,14 @@ interface FormState {
   ecn: string;
   seriesType: string;
   personId?: string;
+  authorId?: string;
+  illustratorId?: string;
+  originalAuthorId?: string;
   genreIds?: number[];
   providerIds?: number[];
   publishDayIds?: number[];
   publisherId?: string;
+  isComplete: boolean;
 }
 const formRef = ref();
 const labelCol = { span: 5 };
@@ -146,12 +181,20 @@ const formState: UnwrapRef<FormState> = reactive({
   isbn: "",
   ecn: "",
   seriesType: "webnovel",
-  personId: undefined,
+  authorId: undefined,
+  illustratorId: undefined,
+  originalAuthorId: undefined,
   publisherId: undefined,
   genreIds: [],
   providerIds: [],
   publishDayIds: [],
+  isComplete: false,
 });
+
+const handlePublisherChange = (value: string[]) => {
+  console.log(`selected ${value}`);
+  return;
+};
 
 const genreOptions = computed(() =>
   genreData.value.map((genre) => {
@@ -219,6 +262,12 @@ const providerOptions = computed(() =>
   })
 );
 
+const publisherOptions = computed(() =>
+  publisherData.value.map((publisher) => {
+    return { label: publisher.name, value: publisher.id.toString() };
+  })
+);
+
 const providerState = reactive({
   indeterminate: false,
   checkAll: false,
@@ -233,6 +282,8 @@ const onCheckProviderAllChange = (e: any) => {
     indeterminate: false,
   });
 };
+
+const publisherState = ref([] as string[]);
 
 watch(
   () => providerState.checkedList,
@@ -281,31 +332,24 @@ const rules: Record<string, Rule[]> = {
       trigger: "change",
     },
   ],
-  genreId: [
+  authorId: [
     {
       required: true,
-      message: "Please select genreId",
+      message: "Please select authorId",
       trigger: "change",
     },
   ],
-  publishDayId: [
+  illustratorId: [
     {
-      required: true,
-      message: "Please select publishDayId",
+      required: false,
+      message: "Please select illustratorId",
       trigger: "change",
     },
   ],
-  providerId: [
+  originalAuthorId: [
     {
-      required: true,
-      message: "Please select providerId",
-      trigger: "change",
-    },
-  ],
-  personId: [
-    {
-      required: true,
-      message: "Please select personId",
+      required: false,
+      message: "Please select originalAuthorId",
       trigger: "change",
     },
   ],
@@ -383,7 +427,7 @@ const formData = computed(() => {
         item.append(key, value[i].toString());
       }
     } else {
-      item.append(key, value);
+      item.append(key, value as string);
     }
   });
   fileList.value.forEach((file: UploadFile) =>

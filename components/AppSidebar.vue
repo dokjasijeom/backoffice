@@ -1,12 +1,14 @@
 <template>
-  <a-menu
-    id="dddddd"
-    v-model:openKeys="openKeys"
-    v-model:selectedKeys="selectedKeys"
-    mode="inline"
-    :items="userStore.userData ? items : noAuthItems"
-    @click="handleClick"
-  ></a-menu>
+  <ClientOnly>
+    <a-menu
+      id="dddddd"
+      v-model:openKeys="openKeys"
+      v-model:selectedKeys="selectedKeys"
+      mode="inline"
+      :items="userStore.userData ? items : noAuthItems"
+      @click="handleClick"
+    ></a-menu>
+  </ClientOnly>
 </template>
 <script lang="ts" setup>
 import { reactive, ref, watch, VueElement, h } from "vue";

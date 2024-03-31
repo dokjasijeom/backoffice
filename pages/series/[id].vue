@@ -94,6 +94,16 @@
           @blur="() => console.log('blur')"
         ></a-select>
       </a-form-item>
+      <a-form-item
+        label="완결 여부"
+        ref="isComplete"
+        name="isComplete"
+      >
+        <a-radio-group v-model:value="formState.isComplete">
+          <a-radio :value="false">연재중</a-radio>
+          <a-radio :value="true">완결</a-radio>
+        </a-radio-group>
+      </a-form-item>
       <a-form-item ref="image" label="표지 이미지" name="image">
         <a-upload
           v-model:file-list="fileList"
@@ -150,6 +160,7 @@ interface FormState {
   providerIds?: number[];
   publishDayIds?: number[];
   publisherId?: string;
+  isComplete: boolean;
 }
 const formRef = ref();
 const labelCol = { span: 5 };
@@ -183,6 +194,7 @@ const formState: UnwrapRef<FormState> = reactive({
   genreIds: [],
   providerIds: [],
   publishDayIds: [],
+  isComplete: seriesData.value!.isComplete,
 });
 
 const genreOptions = computed(() =>
