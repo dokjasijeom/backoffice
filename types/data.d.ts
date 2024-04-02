@@ -31,6 +31,7 @@ interface PersonResponse {
   name: string;
   description?: string;
   series?: [];
+  personType?: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string;
@@ -58,6 +59,7 @@ interface SeriesResponse {
   authors?: PersonResponse[];
   providers?: ProviderResponse[];
   publisher?: PublisherResponse;
+  publishers?: PublisherResponse[];
   episodes?: EpisodeResponse[];
   isComplete: boolean;
 }

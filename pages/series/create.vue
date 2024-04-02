@@ -166,10 +166,10 @@ interface FormState {
   authorId?: string;
   illustratorId?: string;
   originalAuthorId?: string;
+  publisherIds?: number[];
   genreIds?: number[];
   providerIds?: number[];
   publishDayIds?: number[];
-  publisherId?: string;
   isComplete: boolean;
 }
 const formRef = ref();
@@ -184,7 +184,7 @@ const formState: UnwrapRef<FormState> = reactive({
   authorId: undefined,
   illustratorId: undefined,
   originalAuthorId: undefined,
-  publisherId: undefined,
+  publisherIds: [],
   genreIds: [],
   providerIds: [],
   publishDayIds: [],
@@ -283,7 +283,7 @@ const onCheckProviderAllChange = (e: any) => {
   });
 };
 
-const publisherState = ref([] as string[]);
+const publisherState = ref([] as number[]);
 
 watch(
   () => providerState.checkedList,
@@ -292,6 +292,13 @@ watch(
     providerState.indeterminate =
       !!val.length && val.length < providerOptions.value.length;
     providerState.checkAll = val.length === providerOptions.value.length;
+  }
+);
+
+watch(
+  () => publisherState.value,
+  (val) => {
+    formState.publisherIds = publisherState.value;
   }
 );
 

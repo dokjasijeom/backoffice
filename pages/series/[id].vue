@@ -1,6 +1,23 @@
 <template>
   <div>
-    <FormPageHeader v-bind:title="`웹툰 / 웹소설 등록`" />
+    <a-flex :justify="`space-between`" :align="`center`">
+      <FormPageHeader v-bind:title="`웹툰 / 웹소설 등록`" />
+      <a-popconfirm
+        title="삭제하시겠습니까?"
+        ok-text="네, 삭제합니다"
+        cancel-text="취소"
+        placement="left"
+        @confirm="deleteHandler"
+        @cancel="cancelDelete"
+      >
+        <a-button type="primary" danger size="large">
+          <template #icon>
+            <ClearOutlined />
+          </template>
+          삭제
+        </a-button>
+      </a-popconfirm>
+    </a-flex>
     <a-form
       style="border: solid 1px #ccc; border-radius: 16px; padding: 50px 16px"
       ref="formRef"
@@ -72,20 +89,30 @@
           :options="providerOptions"
         />
       </a-form-item>
-      <a-form-item label="출판사" ref="publisherId" name="publisherId">
+      <a-form-item label="출판사">
         <a-select
-          v-model:value="formState.publisherId"
+          v-if="publisherOptions"
+          v-model:value="publisherState"
+          mode="multiple"
+          :options="publisherOptions"
+          option-label-prop="label"
+        >
+        </a-select>
+      </a-form-item>
+      <a-form-item label="글 작가" ref="authorId" name="authorId">
+        <a-select
+          v-model:value="formState.authorId"
           show-search
-          placeholder="Select a Publisher"
-          :options="selectPublisherData"
-          :filter-option="filterPublisherData"
+          placeholder="Select a person"
+          :options="selectPeopleData"
+          :filter-option="filterPeopleData"
           @foucs="() => console.log('focus')"
           @blur="() => console.log('blur')"
         ></a-select>
       </a-form-item>
-      <a-form-item label="작가" ref="personId" name="personId">
+      <a-form-item label="그림 작가" ref="illustratorId" name="illustratorId">
         <a-select
-          v-model:value="formState.personId"
+          v-model:value="formState.illustratorId"
           show-search
           placeholder="Select a person"
           :options="selectPeopleData"
@@ -95,10 +122,21 @@
         ></a-select>
       </a-form-item>
       <a-form-item
-        label="완결 여부"
-        ref="isComplete"
-        name="isComplete"
+        label="원작 작가"
+        ref="originalAuthorId"
+        name="originalAuthorId"
       >
+        <a-select
+          v-model:value="formState.originalAuthorId"
+          show-search
+          placeholder="Select a person"
+          :options="selectPeopleData"
+          :filter-option="filterPeopleData"
+          @foucs="() => console.log('focus')"
+          @blur="() => console.log('blur')"
+        ></a-select>
+      </a-form-item>
+      <a-form-item label="완결 여부" ref="isComplete" name="isComplete">
         <a-radio-group v-model:value="formState.isComplete">
           <a-radio :value="false">연재중</a-radio>
           <a-radio :value="true">완결</a-radio>
@@ -148,6 +186,7 @@ import type { UnwrapRef } from "vue";
 import type { Rule } from "ant-design-vue/es/form";
 import type { UploadFile, SelectProps } from "ant-design-vue";
 import { hangulIncludes } from "@toss/hangul";
+import { notification } from "ant-design-vue";
 
 interface FormState {
   title: string;
@@ -155,11 +194,13 @@ interface FormState {
   isbn: string;
   ecn: string;
   seriesType: string;
-  personId?: string;
+  publisherIds?: number[];
   genreIds?: number[];
   providerIds?: number[];
   publishDayIds?: number[];
-  publisherId?: string;
+  authorId?: string;
+  illustratorId?: string;
+  originalAuthorId?: string;
   isComplete: boolean;
 }
 const formRef = ref();
@@ -179,18 +220,25 @@ const seriesData = computed(
   () => (responseData.value as any).data as SeriesResponse
 );
 
+const author = (type: string) => {
+  console.log(seriesData.value!.authors?.find((v) => v.personType == type));
+  return seriesData.value!.authors?.find((v) => v.personType == type);
+};
+
 const formState: UnwrapRef<FormState> = reactive({
   title: seriesData.value!.title,
   description: seriesData.value!.description ?? "",
   isbn: seriesData.value!.isbn ?? "",
   ecn: seriesData.value!.ecn ?? "",
   seriesType: seriesData.value!.seriesType,
-  personId: seriesData.value!.authors![0]
-    ? seriesData.value!.authors![0].id.toString()
+  authorId: author("author") ? author("author")?.id.toString() : undefined,
+  illustratorId: author("illustrator")
+    ? author("illustrator")?.id.toString()
     : undefined,
-  publisherId: seriesData.value!.publisher?.id
-    ? seriesData.value.publisher.id.toString()
+  originalAuthorId: author("original_author")
+    ? author("original_author")?.id.toString()
     : undefined,
+  publisherIds: [],
   genreIds: [],
   providerIds: [],
   publishDayIds: [],
@@ -263,11 +311,19 @@ const providerOptions = computed(() =>
   })
 );
 
+const publisherOptions = computed(() =>
+  publisherData.value.map((publisher) => {
+    return { label: publisher.name, value: publisher.id };
+  })
+);
+
 const providerState = reactive({
   indeterminate: false,
   checkAll: false,
   checkedList: [] as number[],
 });
+
+const publisherState = ref([] as number[]);
 
 const onCheckProviderAllChange = (e: any) => {
   Object.assign(providerState, {
@@ -285,6 +341,13 @@ watch(
     providerState.indeterminate =
       !!val.length && val.length < providerOptions.value.length;
     providerState.checkAll = val.length === providerOptions.value.length;
+  }
+);
+
+watch(
+  () => publisherState.value,
+  (val) => {
+    formState.publisherIds = publisherState.value;
   }
 );
 
@@ -396,6 +459,9 @@ if (seriesData.value != null) {
   genreState.checkedList = seriesData.value.genres!.map((v) => v.id);
   providerState.checkedList = seriesData.value.providers!.map((v) => v.id);
   publishDayState.checkedList = seriesData.value.publishDays!.map((v) => v.id);
+  publisherState.value = seriesData.value.publishers
+    ? seriesData.value.publishers!.map((v) => v.id)
+    : [];
   console.log(formState);
 }
 
@@ -412,7 +478,7 @@ const formData = computed(() => {
         item.append(key, value[i].toString());
       }
     } else {
-      item.append(key, value);
+      item.append(key, value as string);
     }
   });
   fileList.value.forEach((file: UploadFile) =>
@@ -420,6 +486,22 @@ const formData = computed(() => {
   );
   return item;
 });
+
+const deleteHandler = async () => {
+  await useApi(`/backoffice/series/${useRoute().params.id}`, {
+    method: "delete",
+  }).then(() => {
+    notification["success"]({
+      message: "웹툰 / 웹소설 관리",
+      description: `'${seriesData.value.title}' 작품 삭제가 완료되었습니다.`,
+      duration: 3,
+    });
+
+    navigateTo("/series");
+  });
+};
+
+const cancelDelete = () => console.log("삭제 취소");
 
 const onSubmit = () => {
   formRef.value
