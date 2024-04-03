@@ -1,6 +1,6 @@
 export const usePeople = defineStore("people", {
   state: () => ({
-    people: [],
+    people: [] as PersonResponse[],
   }),
   actions: {
     async getList() {

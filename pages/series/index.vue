@@ -24,7 +24,6 @@
         (record) => {
           return {
             onClick: (event) => {
-              console.log(event);
               return navigateTo(`/series/${record.id}`);
             },
           };

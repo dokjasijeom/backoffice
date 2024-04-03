@@ -1,6 +1,6 @@
 export const useGenres = defineStore("genres", {
   state: () => ({
-    genres: [],
+    genres: [] as GenreResponse[],
   }),
   actions: {
     async getList() {

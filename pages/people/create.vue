@@ -73,6 +73,7 @@ const onSubmit = () => {
       console.log("values", formState, toRaw(formState));
       if (data) {
         console.log(data);
+        await usePeople().getList();
         return navigateTo("/people");
       }
     })

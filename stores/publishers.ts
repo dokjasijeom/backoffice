@@ -1,6 +1,6 @@
 export const usePublishers = defineStore("publishers", {
   state: () => ({
-    publishers: [],
+    publishers: [] as PublisherResponse[],
   }),
   actions: {
     async getList() {

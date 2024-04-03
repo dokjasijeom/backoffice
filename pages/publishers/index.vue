@@ -22,11 +22,30 @@
       :pagination="{ pageSize: 20 }"
     >
       <template #headerCell="{ column }">
-        <template v-if="column.key === 'Name'">
+        <template v-if="column.key === 'name'">
           <span>
             <file-text-two-tone />
             {{ column.title }}
           </span>
+        </template>
+      </template>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'action'">
+          <a-popconfirm
+            title="삭제하시겠습니까?"
+            ok-text="네, 삭제합니다"
+            cancel-text="취소"
+            placement="left"
+            @confirm="deleteHandler(record.id)"
+            @cancel="cancelDelete"
+          >
+            <a-button type="primary" danger size="large">
+              <template #icon>
+                <ClearOutlined />
+              </template>
+              삭제
+            </a-button>
+          </a-popconfirm>
         </template>
       </template>
     </a-table>
@@ -34,12 +53,8 @@
 </template>
 
 <script lang="ts" setup>
-const { data, execute, error, pending } = await useApi(
-  "/backoffice/publishers",
-  {
-    method: "get",
-  }
-);
+const publisherStore = usePublishers();
+await publisherStore.getList();
 
 const columns = [
   {
@@ -57,7 +72,29 @@ const columns = [
     dataIndex: "hashId",
     key: "hashId",
   },
+  {
+    title: "Action",
+    key: "action",
+  },
 ];
 
-const tableData = computed(() => (data.value as any).data);
+const tableData = computed(() => publisherStore.publishers);
+
+const deleteHandler = async (publisherId: number) => {
+  await useApi(`/backoffice/publishers/${publisherId}`, {
+    method: "delete",
+  }).then(async () => {
+    notification["success"]({
+      message: "출판사 관리",
+      description: `'${
+        tableData.value.find((v) => v.id == publisherId)?.name
+      }' 출판사 삭제가 완료되었습니다.`,
+      duration: 3,
+    });
+
+    await publisherStore.getList();
+  });
+};
+
+const cancelDelete = () => console.log("삭제 취소");
 </script>

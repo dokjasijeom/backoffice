@@ -421,7 +421,7 @@ const selectPeopleData = computed(() => {
     (person: PersonResponse) => {
       return {
         value: person.id.toString(),
-        label: person.name,
+        label: person.name ?? "",
       };
     }
   );

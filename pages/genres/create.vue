@@ -76,6 +76,7 @@ const onSubmit = () => {
       console.log("values", formState, toRaw(formState));
       if (data) {
         console.log(data);
+        await useGenres().getList();
         return navigateTo("/genres");
       }
     })

@@ -1,14 +1,12 @@
 <template>
-  <ClientOnly>
-    <a-menu
-      id="dddddd"
-      v-model:openKeys="openKeys"
-      v-model:selectedKeys="selectedKeys"
-      mode="inline"
-      :items="userStore.userData ? items : noAuthItems"
-      @click="handleClick"
-    ></a-menu>
-  </ClientOnly>
+  <a-menu
+    id="dddddd"
+    v-model:openKeys="openKeys"
+    v-model:selectedKeys="selectedKeys"
+    mode="inline"
+    :items="userStore.userData ? items : noAuthItems"
+    @click="handleClick"
+  ></a-menu>
 </template>
 <script lang="ts" setup>
 import { reactive, ref, watch, VueElement, h } from "vue";
@@ -49,40 +47,52 @@ const noAuthItems: ItemType[] = reactive([
 const items: ItemType[] = reactive([
   getItem("콘텐츠 관리", "sub1", () => h(BookOutlined), [
     getItem(
-      h(resolveComponent("nuxt-link"), { to: "/series" }, "웹툰 / 웹소설 목록"),
+      h(
+        resolveComponent("nuxt-link"),
+        { to: "/series" },
+        () => "웹툰 / 웹소설 목록"
+      ),
       "1"
     ),
     // getItem("시리즈 목록", "2"), // 단행본, 단일 회차 구분
     getItem("회차 목록", "3"),
     getItem(
-      h(resolveComponent("nuxt-link"), { to: "/publish-day" }, "연재일 목록"),
+      h(
+        resolveComponent("nuxt-link"),
+        { to: "/publish-day" },
+        () => "연재일 목록"
+      ),
       "4"
     ),
   ]),
 
   { type: "divider" },
   getItem(
-    h(resolveComponent("nuxt-link"), { to: "/providers" }, "플랫폼 목록"),
+    h(resolveComponent("nuxt-link"), { to: "/providers" }, () => "플랫폼 목록"),
     "5",
     () => h(BankOutlined)
   ),
 
   { type: "divider" },
   getItem(
-    h(resolveComponent("nuxt-link"), { to: "/publishers" }, "출판사 목록"),
+    h(
+      resolveComponent("nuxt-link"),
+      { to: "/publishers" },
+      () => "출판사 목록"
+    ),
     "6",
     () => h(ShopOutlined)
   ),
 
   { type: "divider" },
   getItem(
-    h(resolveComponent("nuxt-link"), { to: "/genres" }, "장르 목록"),
+    h(resolveComponent("nuxt-link"), { to: "/genres" }, () => "장르 목록"),
     "7",
     () => h(BarsOutlined)
   ),
   { type: "divider" },
   getItem(
-    h(resolveComponent("nuxt-link"), { to: "/people" }, "인물 목록"),
+    h(resolveComponent("nuxt-link"), { to: "/people" }, () => "인물 목록"),
     "8",
     () => h(UsergroupAddOutlined)
   ),

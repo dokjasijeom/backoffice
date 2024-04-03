@@ -29,6 +29,25 @@
           </span>
         </template>
       </template>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'action'">
+          <a-popconfirm
+            title="삭제하시겠습니까?"
+            ok-text="네, 삭제합니다"
+            cancel-text="취소"
+            placement="left"
+            @confirm="deleteHandler(record.id)"
+            @cancel="cancelDelete"
+          >
+            <a-button type="primary" danger size="large">
+              <template #icon>
+                <ClearOutlined />
+              </template>
+              삭제
+            </a-button>
+          </a-popconfirm>
+        </template>
+      </template>
     </a-table>
   </div>
 </template>
@@ -58,7 +77,29 @@ const columns = [
     dataIndex: "parentGenreId",
     key: "parentGenreId",
   },
+  {
+    title: "Action",
+    key: "action",
+  },
 ];
 
 const tableData = computed(() => genreStore.genres);
+
+const deleteHandler = async (genreId: number) => {
+  await useApi(`/backoffice/genres/${genreId}`, {
+    method: "delete",
+  }).then(async () => {
+    notification["success"]({
+      message: "장르 관리",
+      description: `'${
+        tableData.value.find((v) => v.id == genreId)?.name
+      }' 장르 삭제가 완료되었습니다.`,
+      duration: 3,
+    });
+
+    await genreStore.getList();
+  });
+};
+
+const cancelDelete = () => console.log("삭제 취소");
 </script>

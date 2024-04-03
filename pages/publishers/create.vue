@@ -87,6 +87,7 @@ const onSubmit = () => {
       console.log("values", formState, toRaw(formState));
       if (data) {
         console.log(data);
+        await usePublishers().getList();
         return navigateTo("/publishers");
       }
     })
