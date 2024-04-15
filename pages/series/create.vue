@@ -72,6 +72,23 @@
           :options="providerOptions"
         />
       </a-form-item>
+      <a-form-item
+        label="플랫폼 링크 설정"
+        v-if="formState.providers.length > 0"
+      >
+        <div v-for="provider in formState.providers">
+          <a-form-item
+            :label="
+              providerOptions.find((v) => v.value == provider.providerId)!.label
+            "
+          >
+            <a-input
+              v-model:value="provider.link"
+              placeholder="링크를 입력하세요"
+            />
+          </a-form-item>
+        </div>
+      </a-form-item>
       <a-form-item label="출판사">
         <a-select
           v-if="publisherOptions"
@@ -169,6 +186,7 @@ interface FormState {
   publisherIds?: number[];
   genreIds?: number[];
   providerIds?: number[];
+  providers: { providerId: number; link: string }[];
   publishDayIds?: number[];
   isComplete: boolean;
 }
@@ -187,6 +205,7 @@ const formState: UnwrapRef<FormState> = reactive({
   publisherIds: [],
   genreIds: [],
   providerIds: [],
+  providers: [],
   publishDayIds: [],
   isComplete: false,
 });
@@ -287,11 +306,24 @@ const publisherState = ref([] as number[]);
 
 watch(
   () => providerState.checkedList,
-  (val) => {
+  (val: number[]) => {
     formState.providerIds = providerState.checkedList;
     providerState.indeterminate =
       !!val.length && val.length < providerOptions.value.length;
     providerState.checkAll = val.length === providerOptions.value.length;
+
+    for (const id of providerState.checkedList) {
+      const item = formState.providers.find((v) => v.providerId == id);
+      if (!item) {
+        formState.providers.push({ providerId: id, link: "" });
+      }
+    }
+
+    if (formState.providers.length != val.length) {
+      formState.providers = formState.providers.filter((v) =>
+        val.includes(v.providerId)
+      );
+    }
   }
 );
 
@@ -382,14 +414,15 @@ const publisherData = computed(
 );
 
 const selectPeopleData = computed(() => {
-  const response: SelectProps["options"] = usePeople().people.map(
-    (person: PersonResponse) => {
-      return {
-        value: person.id,
-        label: person.name,
-      };
-    }
-  );
+  const data = usePeople().people;
+  const response: SelectProps["options"] = data
+    ? data.map((person: PersonResponse) => {
+        return {
+          value: person.id,
+          label: person.name,
+        };
+      })
+    : [];
 
   return response;
 });
@@ -399,14 +432,15 @@ const filterPeopleData = (input: string, option: any) => {
 };
 
 const selectPublisherData = computed(() => {
-  const response: SelectProps["options"] = usePublishers().publishers.map(
-    (publisher: PublisherResponse) => {
-      return {
-        value: publisher.id,
-        label: publisher.name,
-      };
-    }
-  );
+  const data = usePublishers().publishers;
+  const response: SelectProps["options"] = data
+    ? data.map((publisher: PublisherResponse) => {
+        return {
+          value: publisher.id,
+          label: publisher.name,
+        };
+      })
+    : [];
 
   return response;
 });
@@ -415,11 +449,14 @@ const filterPublisherData = (input: string, option: any) => {
   return hangulIncludes(option.label, input);
 };
 
-if (genreData.value.length == 0) useGenres().getList();
-if (publishDayData.value.length == 0) usePublishDays().getList();
-if (providerData.value.length == 0) useProviders().getList();
-if (peopleData.value.length == 0) usePeople().getList();
-if (publisherData.value.length == 0) usePublishers().getList();
+if (genreData.value && genreData.value.length == 0) useGenres().getList();
+if (publishDayData.value && publishDayData.value.length == 0)
+  usePublishDays().getList();
+if (providerData.value && providerData.value.length == 0)
+  useProviders().getList();
+if (peopleData.value && peopleData.value.length == 0) usePeople().getList();
+if (publisherData.value && publisherData.value.length == 0)
+  usePublishers().getList();
 
 const beforeUpload = (file: any) => {
   fileList.value = fileList.value.concat(file);
@@ -429,7 +466,9 @@ const beforeUpload = (file: any) => {
 const formData = computed(() => {
   const item = new FormData();
   Object.entries(unref(formState)).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
+    if (key == "providers") {
+      item.append(key, JSON.stringify(value));
+    } else if (Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
         item.append(key, value[i].toString());
       }

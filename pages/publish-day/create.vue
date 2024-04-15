@@ -98,7 +98,7 @@ const onSubmit = () => {
       console.log("values", formState, toRaw(formState));
       if (data) {
         console.log(data);
-        return navigateTo("/publish-day/list");
+        return navigateTo("/publish-day/");
       }
     })
     .catch((error: any) => {
