@@ -88,6 +88,21 @@
           v-model:value="providerState.checkedList"
           :options="providerOptions"
         />
+        <div style="margin-top: 10px" v-if="formState.providers.length > 0">
+          <div v-for="provider in formState.providers">
+            <a-form-item
+              :label="
+                providerOptions.find((v) => v.value == provider.providerId)
+                  ?.label
+              "
+            >
+              <a-input
+                v-model:value="provider.link"
+                placeholder="링크를 입력하세요"
+              />
+            </a-form-item>
+          </div>
+        </div>
       </a-form-item>
       <a-form-item label="출판사">
         <a-select
@@ -95,6 +110,7 @@
           v-model:value="publisherState"
           mode="multiple"
           :options="publisherOptions"
+          :filter-option="filterPublisherData"
           option-label-prop="label"
         >
         </a-select>
@@ -197,6 +213,7 @@ interface FormState {
   publisherIds?: number[];
   genreIds?: number[];
   providerIds?: number[];
+  providers: { providerId: number; link: string }[];
   publishDayIds?: number[];
   authorId?: string;
   illustratorId?: string;
@@ -231,16 +248,17 @@ const formState: UnwrapRef<FormState> = reactive({
   isbn: seriesData.value!.isbn ?? "",
   ecn: seriesData.value!.ecn ?? "",
   seriesType: seriesData.value!.seriesType,
-  authorId: author("author") ? author("author")?.id.toString() : undefined,
+  authorId: author("author") ? author("author")?.id?.toString() : undefined,
   illustratorId: author("illustrator")
-    ? author("illustrator")?.id.toString()
+    ? author("illustrator")?.id?.toString()
     : undefined,
   originalAuthorId: author("original_author")
-    ? author("original_author")?.id.toString()
+    ? author("original_author")?.id?.toString()
     : undefined,
   publisherIds: [],
   genreIds: [],
   providerIds: [],
+  providers: [],
   publishDayIds: [],
   isComplete: seriesData.value!.isComplete,
 });
@@ -252,7 +270,7 @@ const genreOptions = computed(() =>
 );
 
 const genreState = reactive({
-  indeterminate: false,
+  indeterminate: true,
   checkAll: false,
   checkedList: [] as number[],
 });
@@ -281,7 +299,7 @@ const publishDayOptions = computed(() =>
 );
 
 const publishDayState = reactive({
-  indeterminate: false,
+  indeterminate: true,
   checkAll: false,
   checkedList: [] as number[],
 });
@@ -318,7 +336,7 @@ const publisherOptions = computed(() =>
 );
 
 const providerState = reactive({
-  indeterminate: false,
+  indeterminate: true,
   checkAll: false,
   checkedList: [] as number[],
 });
@@ -338,6 +356,26 @@ watch(
   () => providerState.checkedList,
   (val) => {
     formState.providerIds = providerState.checkedList;
+    if (seriesData.value!.providers) {
+      formState.providers = seriesData.value!.providers!.map((provider) => {
+        return {
+          providerId: provider.id,
+          link: provider.link ?? "",
+        };
+      });
+    }
+    for (const id of providerState.checkedList) {
+      const item = formState.providers.find((v) => v.providerId == id);
+      if (!item) {
+        formState.providers.push({ providerId: id, link: "" });
+      }
+    }
+
+    if (formState.providers.length != val.length) {
+      formState.providers = formState.providers.filter((v) =>
+        val.includes(v.providerId)
+      );
+    }
     providerState.indeterminate =
       !!val.length && val.length < providerOptions.value.length;
     providerState.checkAll = val.length === providerOptions.value.length;
@@ -432,19 +470,6 @@ const selectPeopleData = computed(() => {
 const filterPeopleData = (input: string, option: any) => {
   return hangulIncludes(option.label, input);
 };
-
-const selectPublisherData = computed(() => {
-  const response: SelectProps["options"] = usePublishers().publishers.map(
-    (publisher: PublisherResponse) => {
-      return {
-        value: publisher.id.toString(),
-        label: publisher.name,
-      };
-    }
-  );
-
-  return response;
-});
 
 const filterPublisherData = (input: string, option: any) => {
   return hangulIncludes(option.label, input);

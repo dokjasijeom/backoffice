@@ -71,22 +71,19 @@
           v-model:value="providerState.checkedList"
           :options="providerOptions"
         />
-      </a-form-item>
-      <a-form-item
-        label="플랫폼 링크 설정"
-        v-if="formState.providers.length > 0"
-      >
-        <div v-for="provider in formState.providers">
-          <a-form-item
-            :label="
+        <div style="margin-top: 10px" v-if="formState.providers.length > 0">
+          <div v-for="provider in formState.providers">
+            <a-form-item
+              :label="
               providerOptions.find((v) => v.value == provider.providerId)!.label
             "
-          >
-            <a-input
-              v-model:value="provider.link"
-              placeholder="링크를 입력하세요"
-            />
-          </a-form-item>
+            >
+              <a-input
+                v-model:value="provider.link"
+                placeholder="링크를 입력하세요"
+              />
+            </a-form-item>
+          </div>
         </div>
       </a-form-item>
       <a-form-item label="출판사">
@@ -95,6 +92,7 @@
           v-model:value="publisherState"
           mode="multiple"
           :options="publisherOptions"
+          :filter-option="filterPublisherData"
           option-label-prop="label"
         >
         </a-select>
@@ -430,20 +428,6 @@ const selectPeopleData = computed(() => {
 const filterPeopleData = (input: string, option: any) => {
   return hangulIncludes(option.label, input);
 };
-
-const selectPublisherData = computed(() => {
-  const data = usePublishers().publishers;
-  const response: SelectProps["options"] = data
-    ? data.map((publisher: PublisherResponse) => {
-        return {
-          value: publisher.id,
-          label: publisher.name,
-        };
-      })
-    : [];
-
-  return response;
-});
 
 const filterPublisherData = (input: string, option: any) => {
   return hangulIncludes(option.label, input);

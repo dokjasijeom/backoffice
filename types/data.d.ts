@@ -19,6 +19,7 @@ interface ProviderResponse {
   displayName: string;
   description?: string;
   homepageUrl?: string;
+  link: string;
   series?: [];
   createdAt?: string;
   updatedAt?: string;
