@@ -481,9 +481,15 @@ if (providerData.value.length == 0) useProviders().getList();
 if (peopleData.value.length == 0) usePeople().getList();
 if (publisherData.value.length == 0) usePublishers().getList();
 if (seriesData.value != null) {
-  genreState.checkedList = seriesData.value.genres!.map((v) => v.id);
-  providerState.checkedList = seriesData.value.providers!.map((v) => v.id);
-  publishDayState.checkedList = seriesData.value.publishDays!.map((v) => v.id);
+  genreState.checkedList = seriesData.value.genres
+    ? seriesData.value.genres!.map((v) => v.id)
+    : [];
+  providerState.checkedList = seriesData.value.providers
+    ? seriesData.value.providers!.map((v) => v.id)
+    : [];
+  publishDayState.checkedList = seriesData.value.publishDays
+    ? seriesData.value.publishDays!.map((v) => v.id)
+    : [];
   publisherState.value = seriesData.value.publishers
     ? seriesData.value.publishers!.map((v) => v.id)
     : [];
