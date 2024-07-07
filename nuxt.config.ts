@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   css: ["@/assets/css/reset.css"],
   runtimeConfig: {
     public: {
-      baseApiURL: process.env.API_BASE_URL || "http://localhost:8080/",
+      baseApiURL: process.env.API_BASE_URL || "https://api.doksi.kr/",
     },
     thumbnailBaseUrl: process.env.THUMBNAIL_BASE_URL,
   },

@@ -20,6 +20,15 @@
       :columns="columns"
       :data-source="tableData"
       :pagination="{ pageSize: 20 }"
+      :custom-row="
+        (record) => {
+          return {
+            onClick: (event) => {
+              return navigateTo(`/providers/${record.id}`);
+            },
+          };
+        }
+      "
     >
       <template #headerCell="{ column }">
         <template v-if="column.key === 'Name'">
