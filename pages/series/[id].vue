@@ -89,7 +89,10 @@
           :options="providerOptions"
         />
         <div style="margin-top: 10px" v-if="formState.providers.length > 0">
-          <div v-for="provider in formState.providers">
+          <div
+            v-for="provider in formState.providers"
+            :key="provider.providerId"
+          >
             <a-form-item
               :label="
                 providerOptions.find((v) => v.value == provider.providerId)
@@ -115,41 +118,34 @@
         >
         </a-select>
       </a-form-item>
-      <a-form-item label="글 작가" ref="authorId" name="authorId">
+      <a-form-item label="글 작가">
         <a-select
-          v-model:value="formState.authorId"
-          show-search
+          v-if="selectPeopleData"
+          v-model:value="authorState"
+          mode="multiple"
           placeholder="Select a person"
           :options="selectPeopleData"
           :filter-option="filterPeopleData"
-          @foucs="() => console.log('focus')"
-          @blur="() => console.log('blur')"
         ></a-select>
       </a-form-item>
-      <a-form-item label="그림 작가" ref="illustratorId" name="illustratorId">
+      <a-form-item label="그림 작가">
         <a-select
-          v-model:value="formState.illustratorId"
-          show-search
+          v-if="selectPeopleData"
+          v-model:value="illustratorState"
+          mode="multiple"
           placeholder="Select a person"
           :options="selectPeopleData"
           :filter-option="filterPeopleData"
-          @foucs="() => console.log('focus')"
-          @blur="() => console.log('blur')"
         ></a-select>
       </a-form-item>
-      <a-form-item
-        label="원작 작가"
-        ref="originalAuthorId"
-        name="originalAuthorId"
-      >
+      <a-form-item label="원작 작가">
         <a-select
-          v-model:value="formState.originalAuthorId"
-          show-search
+          v-if="selectPeopleData"
+          v-model:value="originalAuthorState"
+          mode="multiple"
           placeholder="Select a person"
           :options="selectPeopleData"
           :filter-option="filterPeopleData"
-          @foucs="() => console.log('focus')"
-          @blur="() => console.log('blur')"
         ></a-select>
       </a-form-item>
       <a-form-item label="완결 여부" ref="isComplete" name="isComplete">
@@ -188,7 +184,7 @@
         <a-button @click="createEpisode">회차 등록</a-button>
       </a-form-item>
       <a-row>
-        <template v-for="episode in seriesData.episodes">
+        <template v-for="episode in seriesData.episodes" :key="episode.id">
           <a-col :span="2">{{ episode.episodeNumber }}</a-col>
         </template>
       </a-row>
@@ -218,6 +214,9 @@ interface FormState {
   authorId?: string;
   illustratorId?: string;
   originalAuthorId?: string;
+  authorIds?: number[];
+  illustratorIds?: number[];
+  originalAuthorIds?: number[];
   isComplete: boolean;
 }
 const formRef = ref();
@@ -260,6 +259,9 @@ const formState: UnwrapRef<FormState> = reactive({
   providerIds: [],
   providers: [],
   publishDayIds: [],
+  authorIds: [],
+  illustratorIds: [],
+  originalAuthorIds: [],
   isComplete: seriesData.value!.isComplete,
 });
 
@@ -342,6 +344,9 @@ const providerState = reactive({
 });
 
 const publisherState = ref([] as number[]);
+const authorState = ref([] as number[]);
+const illustratorState = ref([] as number[]);
+const originalAuthorState = ref([] as number[]);
 
 const onCheckProviderAllChange = (e: any) => {
   Object.assign(providerState, {
@@ -386,6 +391,27 @@ watch(
   () => publisherState.value,
   (val) => {
     formState.publisherIds = publisherState.value;
+  }
+);
+
+watch(
+  () => authorState.value,
+  (val) => {
+    formState.authorIds = authorState.value;
+  }
+);
+
+watch(
+  () => illustratorState.value,
+  (val) => {
+    formState.illustratorIds = illustratorState.value;
+  }
+);
+
+watch(
+  () => originalAuthorState.value,
+  (val) => {
+    formState.originalAuthorIds = originalAuthorState.value;
   }
 );
 
@@ -454,18 +480,11 @@ const publisherData = computed(
   () => usePublishers().publishers as PublisherResponse[]
 );
 
-const selectPeopleData = computed(() => {
-  const response: SelectProps["options"] = usePeople().people.map(
-    (person: PersonResponse) => {
-      return {
-        value: person.id.toString(),
-        label: person.name ?? "",
-      };
-    }
-  );
-
-  return response;
-});
+const selectPeopleData = computed(() =>
+  peopleData.value.map((person) => {
+    return { label: person.name, value: person.id };
+  })
+);
 
 const filterPeopleData = (input: string, option: any) => {
   return hangulIncludes(option.label, input);
@@ -493,6 +512,22 @@ if (seriesData.value != null) {
   publisherState.value = seriesData.value.publishers
     ? seriesData.value.publishers!.map((v) => v.id)
     : [];
+  authorState.value = seriesData.value.authors
+    ? seriesData.value
+        .authors!.filter((v) => v.personType == "author")
+        .map((v) => v.id)
+    : [];
+  illustratorState.value = seriesData.value.authors
+    ? seriesData.value
+        .authors!.filter((v) => v.personType == "illustrator")
+        .map((v) => v.id)
+    : [];
+  originalAuthorState.value = seriesData.value.authors
+    ? seriesData.value
+        .authors!.filter((v) => v.personType == "original_author")
+        .map((v) => v.id)
+    : [];
+
   console.log(formState);
 }
 

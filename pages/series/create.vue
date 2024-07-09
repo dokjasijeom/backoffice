@@ -72,11 +72,15 @@
           :options="providerOptions"
         />
         <div style="margin-top: 10px" v-if="formState.providers.length > 0">
-          <div v-for="provider in formState.providers">
+          <div
+            v-for="provider in formState.providers"
+            :key="provider.providerId"
+          >
             <a-form-item
               :label="
-              providerOptions.find((v) => v.value == provider.providerId)!.label
-            "
+                providerOptions.find((v) => v.value == provider.providerId)
+                  ?.label
+              "
             >
               <a-input
                 v-model:value="provider.link"
@@ -97,10 +101,11 @@
         >
         </a-select>
       </a-form-item>
-      <a-form-item label="글 작가" ref="authorId" name="authorId">
+      <a-form-item label="글 작가">
         <a-select
-          v-model:value="formState.authorId"
-          show-search
+          v-if="selectPeopleData"
+          v-model:value="authorState"
+          mode="multiple"
           placeholder="Select a person"
           :options="selectPeopleData"
           :filter-option="filterPeopleData"
@@ -108,10 +113,11 @@
           @blur="() => console.log('blur')"
         ></a-select>
       </a-form-item>
-      <a-form-item label="그림 작가" ref="illustratorId" name="illustratorId">
+      <a-form-item label="그림 작가">
         <a-select
-          v-model:value="formState.illustratorId"
-          show-search
+          v-if="selectPeopleData"
+          v-model:value="illustratorState"
+          mode="multiple"
           placeholder="Select a person"
           :options="selectPeopleData"
           :filter-option="filterPeopleData"
@@ -119,14 +125,11 @@
           @blur="() => console.log('blur')"
         ></a-select>
       </a-form-item>
-      <a-form-item
-        label="원작 작가"
-        ref="originalAuthorId"
-        name="originalAuthorId"
-      >
+      <a-form-item label="원작 작가">
         <a-select
-          v-model:value="formState.originalAuthorId"
-          show-search
+          v-if="selectPeopleData"
+          v-model:value="originalAuthorState"
+          mode="multiple"
           placeholder="Select a person"
           :options="selectPeopleData"
           :filter-option="filterPeopleData"
@@ -186,6 +189,9 @@ interface FormState {
   providerIds?: number[];
   providers: { providerId: number; link: string }[];
   publishDayIds?: number[];
+  authorIds?: number[];
+  illustratorIds?: number[];
+  originalAuthorIds?: number[];
   isComplete: boolean;
 }
 const formRef = ref();
@@ -205,6 +211,9 @@ const formState: UnwrapRef<FormState> = reactive({
   providerIds: [],
   providers: [],
   publishDayIds: [],
+  authorIds: [],
+  illustratorIds: [],
+  originalAuthorIds: [],
   isComplete: false,
 });
 
@@ -301,6 +310,9 @@ const onCheckProviderAllChange = (e: any) => {
 };
 
 const publisherState = ref([] as number[]);
+const authorState = ref([] as number[]);
+const illustratorState = ref([] as number[]);
+const originalAuthorState = ref([] as number[]);
 
 watch(
   () => providerState.checkedList,
@@ -327,8 +339,29 @@ watch(
 
 watch(
   () => publisherState.value,
-  (val) => {
+  () => {
     formState.publisherIds = publisherState.value;
+  }
+);
+
+watch(
+  () => authorState.value,
+  () => {
+    formState.authorIds = authorState.value;
+  }
+);
+
+watch(
+  () => illustratorState.value,
+  () => {
+    formState.illustratorIds = illustratorState.value;
+  }
+);
+
+watch(
+  () => originalAuthorState.value,
+  () => {
+    formState.originalAuthorIds = originalAuthorState.value;
   }
 );
 
@@ -411,19 +444,11 @@ const publisherData = computed(
   () => usePublishers().publishers as PublisherResponse[]
 );
 
-const selectPeopleData = computed(() => {
-  const data = usePeople().people;
-  const response: SelectProps["options"] = data
-    ? data.map((person: PersonResponse) => {
-        return {
-          value: person.id,
-          label: person.name,
-        };
-      })
-    : [];
-
-  return response;
-});
+const selectPeopleData = computed(() =>
+  peopleData.value.map((person) => {
+    return { label: person.name, value: person.id };
+  })
+);
 
 const filterPeopleData = (input: string, option: any) => {
   return hangulIncludes(option.label, input);

@@ -81,3 +81,11 @@ interface PublisherResponse {
   homepageUrl?: string;
   series?: SeriesResponse[];
 }
+
+interface EpisodeResponse {
+  id: number;
+  title?: string;
+  episodeNumber: number;
+  thumbnail?: string;
+  series?: SeriesResponse[];
+}
