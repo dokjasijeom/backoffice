@@ -20,15 +20,6 @@
       :columns="columns"
       :data-source="tableData"
       :pagination="{ pageSize: 20 }"
-      :custom-row="
-        (record) => {
-          return {
-            onClick: (event) => {
-              return navigateTo(`/series/${record.id}`);
-            },
-          };
-        }
-      "
     >
       <template #headerCell="{ column }">
         <template v-if="column.key === 'title'">
@@ -44,11 +35,37 @@
           </span>
         </template>
       </template>
-      <template #bodyCell="{ column, value }">
+      <template #bodyCell="{ record, column, value }">
         <template v-if="column.key === 'thumbnail'">
           <img :src="`${value}`" width="80" />
         </template>
+        <template v-if="column.key === 'seriesType'">
+          <a-tag :color="value === 'webtoon' ? 'blue' : 'green'">
+            {{ value === "webtoon" ? "웹툰" : "웹소설" }}
+          </a-tag>
+        </template>
+        <template v-if="column.key === 'action'">
+          <a-space>
+            <NuxtLink :to="`/series/${record.id}`">
+              <a-button type="primary" size="small">
+                <template #icon>
+                  <EditOutlined />
+                </template>
+                수정
+              </a-button>
+            </NuxtLink>
+            <a-button type="ghost" size="small">
+              <template #icon>
+                <DeleteOutlined />
+              </template>
+              삭제
+            </a-button>
+          </a-space>
+        </template>
       </template>
+      <!-- <a-table-column key="action" title="액션">
+        
+      </a-table-column> -->
     </a-table>
   </div>
 </template>
@@ -75,6 +92,11 @@ const columns: TableColumnType<any>[] = [
     key: "hashId",
   },
   {
+    title: "유형",
+    dataIndex: "seriesType",
+    key: "seriesType",
+  },
+  {
     title: "표지 이미지",
     dataIndex: "thumbnail",
     key: "thumbnail",
@@ -83,6 +105,10 @@ const columns: TableColumnType<any>[] = [
     title: "제목",
     dataIndex: "title",
     key: "title",
+  },
+  {
+    title: "액션",
+    key: "action",
   },
 ];
 

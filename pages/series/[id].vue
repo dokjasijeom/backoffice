@@ -539,7 +539,9 @@ const beforeUpload = (file: any) => {
 const formData = computed(() => {
   const item = new FormData();
   Object.entries(unref(formState)).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
+    if (key === "providers") {
+      item.append(key, JSON.stringify(value));
+    } else if (Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
         item.append(key, value[i].toString());
       }
