@@ -16,9 +16,15 @@
         </NuxtLink>
       </div>
     </a-flex>
+    <!-- Search Input -->
+    <a-input
+      placeholder="Search by title"
+      style="margin-bottom: 16px; width: 300px"
+      v-on:keyup="updateSearchQuery"
+    />
     <a-table
       :columns="columns"
-      :data-source="tableData"
+      :data-source="filteredData"
       :pagination="{ pageSize: 20 }"
     >
       <template #headerCell="{ column }">
@@ -112,5 +118,16 @@ const columns: TableColumnType<any>[] = [
   },
 ];
 
+const searchQuery = ref("");
 const tableData = computed(() => (data.value as any).data);
+const filteredData = computed(() => {
+  return tableData.value.filter((item: any) =>
+    item.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
+const updateSearchQuery = (event: KeyboardEvent) => {
+  const target = event.target as HTMLInputElement;
+  searchQuery.value = target.value;
+};
 </script>
